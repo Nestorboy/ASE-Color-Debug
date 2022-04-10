@@ -1,0 +1,12 @@
+*
+
+# Include Github info.
+!.github
+!.gitignore
+!LICENSE
+!README.md
+
+# Include everything in Assets/Nessie/
+!Assets/
+!Assets/Nessie
+!Assets/Nessie/**
