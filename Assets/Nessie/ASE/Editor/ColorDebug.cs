@@ -96,13 +96,11 @@ namespace Nessie.ASE.Editor
                 return;
             }
             
-            Vector2 normalizedPreviewPos = PointToRectNormalized(mousePos, previewRect);
-            Vector2 texturePos = normalizedPreviewPos * new Vector2(node.PreviewTexture.width, node.PreviewTexture.height);
-
             // Push a single pixel from a RT into a Tex2D.
             RenderTexture previousRT = RenderTexture.active;
             RenderTexture.active = node.PreviewTexture;
-            PreviewPixel.ReadPixels(new Rect(texturePos.x, texturePos.y, 1, 1), 0, 0, false);
+            Vector2 texelPos = PointToTexelCoordinate(mousePos, previewRect, node.PreviewTexture);
+            PreviewPixel.ReadPixels(new Rect(texelPos.x, texelPos.y, 1, 1), 0, 0, false);
             RenderTexture.active = previousRT;
 
             // Each channel is represented with a full 32-bit float.
@@ -110,6 +108,17 @@ namespace Nessie.ASE.Editor
             DrawColorTooltip(node, mousePos, color);
         }
 
+        private static Vector2 PointToTexelCoordinate(Vector2 point, Rect textureRect, Texture texture)
+        {
+            Vector2 normalizedRectPos = PointToRectNormalized(point, textureRect);
+            if (!SystemInfo.graphicsUVStartsAtTop)
+            {
+                normalizedRectPos.y = 1f - normalizedRectPos.y;
+            }
+
+            return normalizedRectPos * new Vector2(texture.width, texture.height);
+        }
+        
         private static Vector2 PointToRectNormalized(Vector2 point, Rect rect)
         {
             return (point - new Vector2(rect.x, rect.y)) / new Vector2(rect.width, rect.height);
