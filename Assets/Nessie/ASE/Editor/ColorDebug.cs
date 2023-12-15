@@ -65,7 +65,7 @@ namespace Nessie.ASE.Editor
                 ParentNode node = ASEExtensions.GetActiveNode(drawInfo, ___m_nodes);
                 if (!node) return;
                 
-                ShowColorTooltip(drawInfo, node);
+                ShowColorTooltip(drawInfo.MousePosition, node);
             }
         }
 
@@ -83,9 +83,8 @@ namespace Nessie.ASE.Editor
 
         #region Tooltip Methods
 
-        private static void ShowColorTooltip(DrawInfo drawInfo, ParentNode node)
+        private static void ShowColorTooltip(Vector2 mousePos, ParentNode node)
         {
-            Vector2 mousePos = drawInfo.MousePosition;
             Rect previewRect = node.GetPreviewRect();
             if (!previewRect.Contains(mousePos))
             {
