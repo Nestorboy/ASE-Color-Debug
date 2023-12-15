@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using AmplifyShaderEditor;
+using UnityEngine;
 
 namespace Nessie.ASE.Editor
 {
@@ -16,6 +17,11 @@ namespace Nessie.ASE.Editor
             }
 
             return null;
+        }
+
+        public static Rect GetPreviewRect(this ParentNode node)
+        {
+            return ReflectionUtils.GetPrivateField<Rect>(node, "m_previewRect");
         }
         
         public static int GetActiveChannels(this ParentNode node)
