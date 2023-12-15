@@ -21,7 +21,7 @@ namespace Nessie.ASE.Editor
 
         #region Public Properties
 
-        public static bool UseHotkey { get; set; } = true;
+        public static bool UseHotkey => true;
 
         public static Texture2D PreviewPixel
         {
