@@ -96,20 +96,25 @@ namespace Nessie.ASE.Editor
                 return;
             }
             
-            Vector2 mouseRel = mousePos - new Vector2(previewRect.x, previewRect.y);
+            Vector2 normalizedPreviewPos = PointToRectNormalized(mousePos, previewRect);
+            Vector2 texturePos = normalizedPreviewPos * new Vector2(node.PreviewTexture.width, node.PreviewTexture.height);
 
             // Push a single pixel from a RT into a Tex2D.
             RenderTexture previousRT = RenderTexture.active;
             RenderTexture.active = node.PreviewTexture;
-            PreviewPixel.ReadPixels(new Rect(mouseRel.x, mouseRel.y, 1, 1), 0, 0, false);
+            PreviewPixel.ReadPixels(new Rect(texturePos.x, texturePos.y, 1, 1), 0, 0, false);
             RenderTexture.active = previousRT;
 
             // Each channel is represented with a full 32-bit float.
-            byte[] bytes = PreviewPixel.GetRawTextureData();
-            Color color = UnpackColor(bytes);
+            Color color = UnpackColor(PreviewPixel.GetRawTextureData());
             DrawColorTooltip(node, mousePos, color);
         }
 
+        private static Vector2 PointToRectNormalized(Vector2 point, Rect rect)
+        {
+            return (point - new Vector2(rect.x, rect.y)) / new Vector2(rect.width, rect.height);
+        }
+        
         private static Color UnpackColor(byte[] bytes)
         {
             float r = BitConverter.ToSingle(bytes, 0);
