@@ -8,9 +8,11 @@ namespace Nessie.ASE.Editor
         
         static EditorStyles()
         {
-            ColorTooltip = new GUIStyle(GUI.skin.textField)
+            GUIStyle baseStyle = GUI.skin.textField;
+            RectOffset oldPadding = baseStyle.padding;
+            ColorTooltip = new GUIStyle(baseStyle)
             {
-                padding = new RectOffset(2, 2, 2, 2)
+                padding = new RectOffset(oldPadding.left + 2, oldPadding.right + 2, oldPadding.top + 2, oldPadding.bottom + 2)
             };
         }
     }
