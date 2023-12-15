@@ -4,7 +4,7 @@ namespace Nessie.ASE.Editor
 {
     public static class EditorStyles
     {
-        public static GUIStyle ColorTooltip;
+        public static readonly GUIStyle ColorTooltip;
         
         static EditorStyles()
         {

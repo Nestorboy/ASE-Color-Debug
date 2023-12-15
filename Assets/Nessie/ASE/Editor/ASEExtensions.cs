@@ -23,6 +23,11 @@ namespace Nessie.ASE.Editor
         {
             return ReflectionUtils.GetPrivateField<Rect>(node, "m_previewRect");
         }
+
+        public static bool[] GetPreviewChannels(this ParentNode node)
+        {
+            return ReflectionUtils.GetPrivateField<bool[]>(typeof(ParentNode), node, "m_previewChannels");
+        }
         
         public static int GetActiveChannels(this ParentNode node)
         {

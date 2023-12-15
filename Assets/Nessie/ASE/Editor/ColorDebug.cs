@@ -143,13 +143,13 @@ namespace Nessie.ASE.Editor
         {
             string[] colorPrefix = new string[] { "R", "G", "B", "A" };
             
-            Array previewChannels = ReflectionUtils.GetPrivateField<Array>(typeof(ParentNode), node, "m_previewChannels");
+            bool[] previewChannels = node.GetPreviewChannels();
             int activeChannels = node.GetActiveChannels();
             int usedChannels = 0;
             string labelText = "";
             for (int i = 0; i < activeChannels; i++)
             {
-                if (!(bool)previewChannels.GetValue(i)) continue;
+                if (!previewChannels[i]) continue;
                 
                 string colorString = $"{colorPrefix[i]}: {color[i].ToString(CultureInfo.InvariantCulture)}";
                 labelText += usedChannels >= 1 ? $"\n{colorString}" : colorString;
