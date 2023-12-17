@@ -53,19 +53,31 @@ namespace Nessie.ASE.Editor
             harmony.PatchAll();
         }
 
-        [HarmonyPatch(typeof(ParentGraph), nameof(ParentGraph.Draw))]
-        private static class PatchDrawPreview
+        [HarmonyPatch(typeof(AmplifyShaderEditorWindow), nameof(AmplifyShaderEditorWindow.UpdateNodePreviewListAndTime))]
+        private static class PatchWindowUpdate
         {
-            private static void Postfix(DrawInfo drawInfo, List<ParentNode> ___m_nodes)
+            private static void Prefix(AmplifyShaderEditorWindow __instance, ref bool ___m_repaintIsDirty)
             {
-                if (drawInfo.CurrentEventType != EventType.Repaint) return;
-
-                if (UseHotkey && !Event.current.control) return;
+                if (UIUtils.CurrentWindow != __instance) return;
                 
-                ParentNode node = ASEExtensions.GetActiveNode(drawInfo, ___m_nodes);
+                if (UseHotkey && Event.current != null && !Event.current.control) return;
+
+                ___m_repaintIsDirty = true;
+            }
+        }
+
+        [HarmonyPatch(typeof(AmplifyShaderEditorWindow), "OnGUI")]
+        private static class PatchWindowOnGUI
+        {
+            private static void Postfix(ParentGraph ___m_customGraph, ParentGraph ___m_mainGraphInstance, Vector2 ___m_currentMousePos2D)
+            {
+                if (UseHotkey && Event.current != null && !Event.current.control) return;
+                
+                ParentGraph currentGraph = ___m_customGraph ? ___m_customGraph : ___m_mainGraphInstance;
+                ParentNode node = ASEExtensions.GetActiveNode(___m_currentMousePos2D, currentGraph.AllNodes);
                 if (!node) return;
                 
-                ShowColorTooltip(drawInfo.MousePosition, node);
+                ShowColorTooltip(___m_currentMousePos2D, node);
             }
         }
 

@@ -6,14 +6,14 @@ namespace Nessie.ASE.Editor
 {
     public static class ASEExtensions
     {
-        public static ParentNode GetActiveNode(DrawInfo drawInfo, List<ParentNode> nodes)
+        public static ParentNode GetActiveNode(Vector2 mousePos, List<ParentNode> nodes)
         {
             int nodeCount = nodes.Count;
             for (int i = nodeCount - 1; i >= 0; i--)
             {
                 ParentNode node = nodes[i];
                 if (!node.IsVisible || node.IsMoving) continue;
-                if (node.GlobalPosition.Contains(drawInfo.MousePosition)) return node;
+                if (node.GlobalPosition.Contains(mousePos)) return node;
             }
 
             return null;
