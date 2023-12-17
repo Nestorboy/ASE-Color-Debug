@@ -17,6 +17,9 @@ namespace Nessie.ASE.Editor
 
         private static Texture2D m_previewPixel;
 
+        private static bool m_didBindKeyPress;
+        private static bool m_isHoldingHotkey;
+        
         #endregion Private Fields
 
         #region Public Properties
@@ -44,6 +47,15 @@ namespace Nessie.ASE.Editor
         static ColorDebug()
         {
             AssemblyReloadEvents.afterAssemblyReload += PostAssemblyReload;
+            
+            System.Reflection.FieldInfo info = typeof(EditorApplication).GetField("globalEventHandler", ReflectionUtils.PrivateStatic);
+            EditorApplication.CallbackFunction value = (EditorApplication.CallbackFunction)info?.GetValue(null);
+            if (value != null)
+            {
+                value += OnGlobalKeyPress;
+                info.SetValue(null, value);
+                m_didBindKeyPress = true;
+            }
         }
 
         private static void PostAssemblyReload()
@@ -53,6 +65,11 @@ namespace Nessie.ASE.Editor
             harmony.PatchAll();
         }
 
+        private static void OnGlobalKeyPress()
+        {
+            m_isHoldingHotkey = Event.current != null && Event.current.control && Event.current.type == EventType.KeyDown;
+        }
+
         [HarmonyPatch(typeof(AmplifyShaderEditorWindow), nameof(AmplifyShaderEditorWindow.UpdateNodePreviewListAndTime))]
         private static class PatchWindowUpdate
         {
@@ -60,7 +77,7 @@ namespace Nessie.ASE.Editor
             {
                 if (UIUtils.CurrentWindow != __instance) return;
                 
-                if (UseHotkey && Event.current != null && !Event.current.control) return;
+                if (UseHotkey && m_didBindKeyPress && !m_isHoldingHotkey) return;
 
                 ___m_repaintIsDirty = true;
             }
