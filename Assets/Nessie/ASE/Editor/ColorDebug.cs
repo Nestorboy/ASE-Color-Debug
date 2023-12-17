@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using UnityEditor;
 using UnityEngine;
@@ -49,9 +48,9 @@ namespace Nessie.ASE.Editor
             AssemblyReloadEvents.afterAssemblyReload += PostAssemblyReload;
             
             System.Reflection.FieldInfo info = typeof(EditorApplication).GetField("globalEventHandler", ReflectionUtils.PrivateStatic);
-            EditorApplication.CallbackFunction value = (EditorApplication.CallbackFunction)info?.GetValue(null);
-            if (value != null)
+            if (info != null)
             {
+                EditorApplication.CallbackFunction value = (EditorApplication.CallbackFunction)info.GetValue(null);
                 value += OnGlobalKeyPress;
                 info.SetValue(null, value);
                 m_didBindKeyPress = true;
