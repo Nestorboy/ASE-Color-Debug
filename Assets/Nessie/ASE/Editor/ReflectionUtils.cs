@@ -5,20 +5,30 @@ namespace Nessie.ASE.Editor
 {
     public static class ReflectionUtils
     {
-        private const BindingFlags PublicInstanced = BindingFlags.Instance | BindingFlags.NonPublic;
+        public const BindingFlags PrivateInstanced = BindingFlags.Instance | BindingFlags.NonPublic;
+        public const BindingFlags PrivateStatic = BindingFlags.Static | BindingFlags.NonPublic;
+        public const BindingFlags Private = PrivateInstanced | PrivateStatic;
+        
+        public static T GetField<T>(object obj, string fieldName, BindingFlags flags)
+        {
+            return GetField<T>(obj.GetType(), obj, fieldName, flags);
+        }
+
+        public static T GetField<T>(Type type, object obj, string fieldName, BindingFlags flags)
+        {
+            FieldInfo fInfo = type.GetField(fieldName, flags);
+
+            return (T)fInfo?.GetValue(obj);
+        }
         
         public static T GetPrivateField<T>(object obj, string fieldName)
         {
-            Type type = obj.GetType();
-
-            return GetPrivateField<T>(type, obj, fieldName);
+            return GetPrivateField<T>(obj.GetType(), obj, fieldName);
         }
 
         public static T GetPrivateField<T>(Type type, object obj, string fieldName)
         {
-            FieldInfo fInfo = type.GetField(fieldName, PublicInstanced);
-
-            return (T)fInfo?.GetValue(obj);
+            return GetField<T>(type, obj, fieldName, Private);
         }
     }
 }
