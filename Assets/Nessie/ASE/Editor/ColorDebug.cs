@@ -18,6 +18,7 @@ namespace Nessie.ASE.Editor
 
         private static bool m_didBindKeyPress;
         private static bool m_isHoldingHotkey;
+        private static bool m_tooltipActive;
         
         #endregion Private Fields
 
@@ -66,7 +67,7 @@ namespace Nessie.ASE.Editor
 
         private static void OnGlobalKeyPress()
         {
-            m_isHoldingHotkey = Event.current != null && Event.current.control && Event.current.type == EventType.KeyDown;
+            m_isHoldingHotkey = Event.current != null && Event.current.control;
         }
 
         [HarmonyPatch(typeof(AmplifyShaderEditorWindow), nameof(AmplifyShaderEditorWindow.UpdateNodePreviewListAndTime))]
@@ -74,11 +75,20 @@ namespace Nessie.ASE.Editor
         {
             private static void Prefix(AmplifyShaderEditorWindow __instance, ref bool ___m_repaintIsDirty)
             {
+                if (!UseHotkey || !m_didBindKeyPress) return;
+                
                 if (UIUtils.CurrentWindow != __instance) return;
                 
-                if (UseHotkey && m_didBindKeyPress && !m_isHoldingHotkey) return;
-
-                ___m_repaintIsDirty = true;
+                if (m_isHoldingHotkey)
+                {
+                    m_tooltipActive = true;
+                    ___m_repaintIsDirty = true;
+                }
+                else if (m_tooltipActive)
+                {
+                    m_tooltipActive = false;
+                    ___m_repaintIsDirty = true;
+                }
             }
         }
 
@@ -87,7 +97,7 @@ namespace Nessie.ASE.Editor
         {
             private static void Postfix(ParentGraph ___m_customGraph, ParentGraph ___m_mainGraphInstance, Vector2 ___m_currentMousePos2D)
             {
-                if (UseHotkey && Event.current != null && !Event.current.control) return;
+                if (!m_tooltipActive) return;
                 
                 ParentGraph currentGraph = ___m_customGraph ? ___m_customGraph : ___m_mainGraphInstance;
                 ParentNode node = ASEExtensions.GetActiveNode(___m_currentMousePos2D, currentGraph.AllNodes);
