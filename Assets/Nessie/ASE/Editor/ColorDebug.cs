@@ -174,6 +174,7 @@ namespace Nessie.ASE.Editor
         private static void DrawColorTooltip(ParentNode node, Vector2 mousePos, Color color)
         {
             string tooltip = FormatColorTooltip(node, color);
+            if (tooltip == null) tooltip = "No channels";
 
             GUIStyle tooltipStyle = EditorStyles.ColorTooltip;
             Vector2 rectSize = tooltipStyle.CalcSize(new GUIContent(tooltip));
