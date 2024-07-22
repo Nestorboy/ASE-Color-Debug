@@ -1,0 +1,18 @@
+{
+    "name": "com.nessie.ase.colordebug.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f540dafdfbc0586439d98823585550d4"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
